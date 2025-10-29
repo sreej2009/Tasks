@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task-Sree</title>
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
+
+      * {
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+        transition: background 0.3s ease, color 0.3s ease, border 0.3s ease;
+      }
+
+      body {
+        background: linear-gradient(135deg, #f3e8ff, #fff8f9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+      }
+
+      .container {
+        width: 95%;
+        max-width: 450px;
+        border-radius: 20px;
+        background: #fff;
+        padding: 25px;
+        padding-bottom: 0;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
+        position: relative;
+      }
+
+      h2 {
+        text-align: center;
+        color: #6a1b9a;
+        margin-bottom: 25px;
+        font-weight: 600;
+      }
+
+      /* Dark Mode Styles */
+      body.dark {
+        background: linear-gradient(135deg, #1a1a1a, #2b133e);
+      }
+
+      body.dark .container {
+        background: #2a1f3a;
+        color: #fff;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+      }
+
+      body.dark h2 {
+        color: #e1b3ff;
+      }
+
+      body.dark .plan {
+        border-color: #3c2f52;
+      }
+
+      body.dark .plan.active {
+        border-color: #bb86fc;
+        box-shadow: 0 0 12px rgba(187, 134, 252, 0.3);
+      }
+      body.dark .plan-header {
+        background: #35264d;
+      }
+
+      body.dark .plan-body {
+        background: #2a1f3a;
+      }
+
+      body.dark .footer span {
+        color: #bb86fc;
+      }
+
+      body.dark .plan-title {
+        color: #f3e8ff;
+      }
+
+      body.dark .plan-sub,
+      body.dark .plan-desc {
+        color: #c8b8e8;
+      }
+
+      body.dark .price .new {
+        color: #f8d9ff;
+      }
+
+      body.dark .total {
+        color: #e1b3ff;
+      }
+
+      /* Dark Mode Toggle */
+      .toggle-mode {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+        background: linear-gradient(90deg, #6a1b9a, #9c27b0);
+        color: #fff;
+        border-radius: 20px;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .toggle-mode:hover {
+        background: linear-gradient(90deg, #5b1790, #8e24aa);
+      }
+
+      /* Plans */
+      .plan {
+        border: 1.5px solid #ddd;
+        border-radius: 15px;
+        margin-bottom: 25px;
+        overflow: visible;
+        transition: 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        background: #fff;
+      }
+
+      /*  Hover Colors */
+      .plan:nth-child(2):hover {
+        border-color: #b388ff;
+        box-shadow: 0 0 15px rgba(179, 136, 255, 0.4);
+      }
+
+      .plan:nth-child(3):hover {
+        border-color: #ff8f00;
+        box-shadow: 0 0 15px rgba(255, 143, 0, 0.4);
+      }
+
+      .plan:nth-child(4):hover {
+        border-color: #5c6bc0;
+        box-shadow: 0 0 15px rgba(92, 107, 192, 0.4);
+      }
+
+      .plan.active {
+        border-color: #6a1b9a;
+        box-shadow: 0 0 12px rgba(106, 27, 154, 0.25);
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+
+      .plan-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        background: #f9f6ff;
+        position: relative;
+        border-radius: 15px;
+      }
+
+      .plan-header-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      input[type="radio"] {
+        accent-color: #6a1b9a;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+      }
+
+      .plan-title {
+        font-weight: 600;
+        font-size: 16px;
+        color: #222;
+      }
+
+      .plan-sub {
+        font-size: 13px;
+        color: #777;
+      }
+
+      /* Badge */
+      .plan-badge {
+        position: absolute;
+        top: -10px;
+        right: 15px;
+        background: #ff7c9c;
+        color: #fff;
+        padding: 4px 10px;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 4px 4px 4px 0;
+        box-shadow: 0 3px 6px rgba(255, 124, 156, 0.3);
+      }
+
+      .plan-badge::after {
+        content: "";
+        position: absolute;
+        bottom: -6px;
+        right: 0;
+        width: 0;
+        height: 0;
+        border-top: 6px solid #cc5e7d;
+        border-left: 6px solid transparent;
+      }
+
+      .plan-badge.gold {
+        background: #ff8f00;
+        box-shadow: 0 3px 6px rgba(255, 143, 0, 0.3);
+      }
+
+      .plan-badge.gold::after {
+        border-top-color: #cc7200;
+      }
+
+      .plan-badge.platinum {
+        background: #5c6bc0;
+        box-shadow: 0 3px 6px rgba(92, 107, 192, 0.3);
+      }
+
+      .plan-badge.platinum::after {
+        border-top-color: #3f51b5;
+      }
+
+      /* Arrow */
+      .arrow {
+        font-size: 18px;
+        background: linear-gradient(90deg, #8e24aa, #ab47bc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        transition: transform 0.4s ease;
+      }
+
+      .plan.active .arrow {
+        transform: rotate(180deg);
+      }
+
+      /*expands - active */
+      .plan-body {
+        max-height: 0;
+        overflow: hidden;
+        background: #fff;
+        padding: 0 15px;
+        transition: max-height 0.4s ease, padding 0.3s ease;
+      }
+
+      .plan.active .plan-body {
+        max-height: 400px;
+        padding: 15px;
+      }
+
+      .plan-desc {
+        color: #555;
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+
+      .price {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+      }
+
+      .price .new {
+        font-weight: 600;
+        color: #222;
+        font-size: 16px;
+      }
+
+      .price .old {
+        text-decoration: line-through;
+        color: #aaa;
+        font-size: 13px;
+      }
+
+      .selectors {
+        margin-bottom: 10px;
+      }
+
+      .row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+
+      select {
+        width: 48%;
+        padding: 6px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+      }
+
+      .summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 15px;
+      }
+
+      .free-delivery {
+        color: #43a047;
+        font-weight: 500;
+      }
+
+      .total {
+        font-size: 15px;
+        color: #222;
+      }
+
+      .add-to-cart {
+        width: 100%;
+        background: linear-gradient(90deg, #6a1b9a, #9c27b0);
+        color: #fff;
+        padding: 12px;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: 0.3s;
+      }
+
+      .add-to-cart:hover {
+        background: linear-gradient(90deg, #5b1790, #8e24aa);
+      }
+
+      .footer {
+        text-align: center;
+        font-size: 13px;
+        color: #999;
+        margin-top: 10px;
+      }
+
+      .footer span {
+        color: #6a1b9a;
+        font-weight: 500;
+      }
+
+      @media (max-width: 480px) {
+        h2 {
+          font-size: 18px;
+        }
+
+        .plan-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .arrow {
+          position: absolute;
+          right: 15px;
+          top: 20px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="toggle-mode" id="toggleMode">🌞 Light</div>
+      <h2>🌟 Exclusive Bundle Offers 🌟</h2>
+
+      <!-- Plan 1 -->
+      <div class="plan" data-price="10">
+        <div class="plan-header">
+          <div class="plan-header-left">
+            <input type="radio" name="plan" />
+            <div>
+              <span class="plan-title">Starter Pack</span>
+              <p class="plan-sub">Perfect for beginners</p>
+            </div>
+          </div>
+          <div class="plan-badge">10% OFF</div>
+          <span class="arrow">▼</span>
+        </div>
+
+        <div class="plan-body">
+          <p class="plan-desc">Includes 1 item at a discounted price.</p>
+          <div class="price">
+            <span class="new">$10.00 USD</span>
+            <span class="old">$24.00 USD</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plan 2 -->
+      <div class="plan" data-price="18">
+        <div class="plan-header">
+          <div class="plan-header-left">
+            <input type="radio" name="plan" />
+            <div>
+              <span class="plan-title">Premium Duo</span>
+              <p class="plan-sub">Our most popular bundle</p>
+            </div>
+          </div>
+          <div class="plan-badge gold">MOST POPULAR</div>
+          <span class="arrow">▼</span>
+        </div>
+
+        <div class="plan-body">
+          <p class="plan-desc">
+            Includes 2 premium items with customization options.
+          </p>
+
+          <div class="selectors">
+            <div class="row">
+              <select>
+                <option>Size: S</option>
+                <option>M</option>
+                <option>L</option>
+              </select>
+              <select>
+                <option>Color: Black</option>
+                <option>White</option>
+                <option>Red</option>
+              </select>
+            </div>
+            <div class="row">
+              <select>
+                <option>Size: S</option>
+                <option>M</option>
+                <option>L</option>
+              </select>
+              <select>
+                <option>Color: Blue</option>
+                <option>Black</option>
+                <option>Green</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="price">
+            <span class="new">$18.00 USD</span>
+            <span class="old">$24.00 USD</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plan 3 -->
+      <div class="plan" data-price="24">
+        <div class="plan-header">
+          <div class="plan-header-left">
+            <input type="radio" name="plan" />
+            <div>
+              <span class="plan-title">Elite Trio</span>
+              <p class="plan-sub">Best value for advanced users</p>
+            </div>
+          </div>
+          <div class="plan-badge platinum">30% OFF</div>
+          <span class="arrow">▼</span>
+        </div>
+
+        <div class="plan-body">
+          <p class="plan-desc">
+            Get 3 items with exclusive perks and free shipping.
+          </p>
+          <div class="price">
+            <span class="new">$24.00 USD</span>
+            <span class="old">$36.00 USD</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="summary">
+        <p class="free-delivery">🚚 Free Delivery</p>
+        <p class="total">Total: <strong id="total-price">$0.00 USD</strong></p>
+      </div>
+
+      <button class="add-to-cart">+ Add to Cart</button>
+      <p class="footer">Powered by <span>SREE</span></p>
+    </div>
+
+    <script>
+      const plans = document.querySelectorAll(".plan");
+      const totalPrice = document.getElementById("total-price");
+      const radios = document.querySelectorAll('input[name="plan"]');
+      const toggleBtn = document.getElementById("toggleMode");
+
+      plans.forEach((p) => p.classList.remove("active"));
+      radios.forEach((r) => (r.checked = false));
+      totalPrice.textContent = "$0.00 USD";
+
+      // Plan expand/collapse logic
+      plans.forEach((plan, i) => {
+        plan.addEventListener("click", (e) => {
+          if (e.target.tagName.toLowerCase() === "select") return;
+
+          const isActive = plan.classList.contains("active");
+
+          // Collapse all
+          plans.forEach((p) => p.classList.remove("active"));
+          radios.forEach((r) => (r.checked = false));
+
+          if (!isActive) {
+            plan.classList.add("active");
+            radios[i].checked = true;
+            const price = plan.getAttribute("data-price");
+            totalPrice.textContent = `$${price}.00 USD`;
+          } else {
+            totalPrice.textContent = "$0.00 USD";
+          }
+        });
+      });
+
+      document.querySelectorAll(".plan select").forEach((dropdown) => {
+        dropdown.addEventListener("click", (e) => e.stopPropagation());
+        dropdown.addEventListener("change", (e) => e.stopPropagation());
+      });
+
+      // Dark mode
+      toggleBtn.addEventListener("click", () => {
+        document.body.classList.toggle("dark");
+        toggleBtn.textContent = document.body.classList.contains("dark")
+          ? "🌙 Dark"
+          : "🌞 Light";
+      });
+    </script>
+  </body>
+</html>
